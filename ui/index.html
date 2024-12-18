@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinalZ Garage</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.prod.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+</head>
+<style>
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    :root {
+        background-color: transparent !important;
+        color-scheme: normal !important;
+    }
+    body {
+        display: none;
+        background-image: url(./img/bg.png);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .not-gradient-border {
+        position: relative;
+        border-radius: 0.75rem;
+        padding: 5px;
+    }
+
+    .not-gradient-border::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 0.75rem;
+        padding: 2px;
+        background: linear-gradient(to bottom, #49494A, #49494A);
+        -webkit-mask: 
+            linear-gradient(#fff 0 0) content-box, 
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: destination-out;
+        mask-composite: exclude; 
+    }
+    
+    .gradient-border {
+        position: relative;
+        border-radius: 0.75rem;
+        padding: 5px;
+    }
+
+    .gradient-border::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 0.75rem;
+        padding: 2px;
+        background: linear-gradient(to bottom, rgb(255, 90, 90), rgb(32, 0, 0));
+        -webkit-mask: 
+            linear-gradient(#fff 0 0) content-box, 
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: destination-out;
+        mask-composite: exclude; 
+    }
+
+    .gradient-border::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 7px;
+        background: rgb(255, 90, 90);
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .circular-progress {
+        --size: 250px;
+        --half-size: calc(var(--size) / 2);
+        --stroke-width: 20px;
+        --radius: calc((var(--size) - var(--stroke-width)) / 2);
+        --circumference: calc(var(--radius) * pi * 2);
+        --dash: calc((var(--progress) * var(--circumference)) / 100);
+        animation: progress-animation 5s linear 0s 1 forwards;
+        position: relative;
+    }
+
+    .circular-progress circle {
+        cx: var(--half-size);
+        cy: var(--half-size);
+        r: var(--radius);
+        stroke-width: var(--stroke-width);
+        fill: none;
+        stroke-linecap: round;
+    }
+
+    .circular-progress circle.bg {
+        stroke: #2D2526;
+    }
+
+    .circular-progress circle.fg {
+        transform: rotate(90deg);
+        transform-origin: var(--half-size) var(--half-size);
+        stroke-dasharray: var(--dash) calc(var(--circumference) - var(--dash));
+        transition: stroke-dasharray 0.3s linear 0s;
+        stroke: #F96161;
+    }
+
+    .circular-progress image {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-5%, -5%);
+    }
+
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity 0.3s;
+    }
+    .fade-enter, .fade-leave-to {
+        opacity: 0;
+    }
+
+    .animate__animated.animate__fadeInDown { 
+        --animate-duration: 2s;
+    }
+
+    .animate__animated.animate__fadeOutUp { 
+        --animate-duration: 2s;
+    }
+
+    .animate__animated.animate__zoomIn {
+        --animate-duration: 1s;
+    }
+
+    .animate__animated.animate__zoomOut {
+        --animate-duration: 1s;
+    }
+
+</style>
+<body class="font-brand font-bold bg-black bg-opacity-90 overflow-hidden">
+    <div id="app" class="h-screen flex items-center justify-center">
+
+        <div v-if="showAlert" role="alert" class="absolute w-80 alert alert-error text-center animate__animated animate__fadeInDown bg-[#FF0000] bg-opacity-[20%] text-white" @animationend="hideAlert">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{{ alertMessage }}</span> <!-- Display the alert message -->
+          </div>
+
+        <div class="w-[70%] h-[84.12vh] bg-transparent rounded-xl p-6 animate__animated animate__zoomIn">
+            <div class="flex flex-row text-white h-10 items-center mt-2">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-car text-[2rem] text-[#F05E5E]"></i>
+                    <span class="ml-2 md:text-[0.75rem] 2xl:text-[1rem]">{{gName}}</span>
+                </div>
+                <div class="flex items-center bg-[#1A1A1A] ml-16 rounded-md px-2 py-1.5 w-[25rem] h-[2.25rem]">
+                    <input type="text" v-model="searchQuery" placeholder="Keress járművekre" class="bg-transparent text-white placeholder-gray-600 focus:outline-none flex-grow p-1">
+                    <i class="fa-solid fa-magnifying-glass text-gray-600 ml-2"></i>
+                </div>
+                <div class="flex items-center space-x-4 ml-12 gap-4">
+                    <button @click="activateButton('car')" :class="{'bg-gradient-to-b from-red-500 to-[#460C0D] text-white': activeButton === 'car', 'bg-[#191D20]': activeButton !== 'car'}" class="fa-solid fa-car text-[1.5rem] text-gray-600 p-2 rounded-xl border-none cursor-pointer hover:opacity-80 transition-opacity"></button>
+                    <button @click="activateButton('impound')" :class="{'bg-gradient-to-b from-red-500 to-[#460C0D] text-white': activeButton === 'impound', 'bg-[#191D20]': activeButton !== 'impound'}" class="fa-solid fa-lock text-[1.5rem] text-gray-600 p-2 rounded-xl border-none cursor-pointer hover:opacity-80 transition-opacity"></button>
+                </div>
+                <button @click="close()" class="flex md:ml-12 lg:ml-12 2xl:ml-auto hover:bg-red-500 rounded-md p-1 px-6 border-2 border-[#49494A] bg-[#191D20] hover:text-white transition-colors">ESC</button>
+            </div>
+            <div class="flex w-full mt-8">
+                <div class="w-[28rem] h-[43rem] bg-[#FF0000] bg-opacity-[5%] border border-[#49494A] rounded-xl p-6 relative overflow-hidden">
+                    
+                    <transition name="fade" mode="out-in">
+                        <div class="relative z-20 mt-12 flex flex-col items-start " :key="selectedCar?.name">
+                            <img :src="`./assets/${selectedCar?.label.toLowerCase()}.png`" alt="Car" class="absolute transform -left-20 opacity-20 blur-[1px] -top-5 w-[70%] z-10">
+                            <h2 class="text-[2.3rem] text-white font-bold ml-3">{{ selectedCar?.label || 'ROGERIONT FARER' }}</h2>
+                            <p class="text-sm text-left ml-3 text-[#9F9D9E]">{{ selectedCar?.plate || 'AA:LE:234' }}</p>
+                        </div>
+                    </transition>
+                    <div class="flex flex-row ml-3 mt-10 space-y-0 space-x-4 relative z-20">
+                        <button @click="takeOut(selectedCar?.model, selectedCar?.plate)" v-if="activeButton === 'car'" class="bg-[#1A1A1A] bg-opacity-70 text-[#49494A] border border-[#49494A] transition-all duration-500 hover:text-red-400 border hover:border-red-400 px-12 py-3 rounded-md">SPAWN</button>
+                        <!-- <button v-if="activeButton === 'car'" class="bg-[#1A1A1A] bg-opacity-70 text-[#49494A] border border-[#49494A] transition-all duration-500 hover:text-red-400 border hover:border-red-400 px-12 py-3 rounded-md">ÁTADÁS</button> -->
+                        <button @click="takeOutImp(selectedCar?.model, selectedCar?.plate)" v-if="activeButton === 'impound'" class="bg-[#1A1A1A] bg-opacity-70 text-red-400 border border-red-400 px-12 py-3 rounded-md">Kivétel lefoglaltakból</button>
+                    </div>
+                    <div class="mt-8 relative z-20">
+                        <div class="flex items-center space-x-2">
+                            <svg width="75" height="75" viewBox="0 0 250 250" class="circular-progress ml-3" :style="{ '--progress': selectedCar ? selectedCar.body  : 75 }">
+                                <circle class="bg"></circle>
+                                <circle class="fg"></circle>
+                                <image href="./assets/engine.png" class="circular-progress" width="120" height="120" x="75" y="75" />
+                            </svg>
+                            <transition name="fade" mode="out-in">
+                                <div class="flex flex-col ml-6" :key="selectedCar?.body">
+                                    <span class="text-2xl text-white">{{ selectedCar?.body || '75' }}%</span>
+                                    <p class="text-sm text-gray-400">Jármű állapot</p>
+                                </div>
+                            </transition>
+                        </div>
+                    </div>
+                    <div class="mt-8 flex flex-row">
+                        <div class="relative w-[30%] h-[15.5rem] bg-[#201B1C] ml-3 rounded-md mt-2">
+                            <div class="absolute bottom-0 left-0 w-full bg-[#F05E5E] rounded-md overflow-hidden transition-all duration-500" :style="{ height: selectedCar ? selectedCar.fuel + '%' : '0%' }">
+                            </div>
+                            <div class="absolute bottom-0 left-0 w-full h-full flex items-center justify-center text-white text-4xl font-bold">{{ selectedCar?.fuel || '0' }}%</div>
+                        </div>
+                        <transition name="fade" mode="out-in">
+                            <div class="flex flex-col ml-4 mt-1" :key="selectedCar?.fuel">
+                                <p class="text-2xl font-bold text-white">ÜZEMANYAG</p>
+                                <p class="text-sm text-gray-400">Az autóban</p>
+                            </div>
+                        </transition>
+                    </div>
+                </div>
+                <div class="w-[65rem] h-[44rem] text-center ml-5 -mt-3">
+                    <div class="grid grid-cols-3 flex flex-row -gap-y-[1rem]">
+                        <div v-for="car in filteredCars" :key="car.plate" @click="selectCar(car)" :class="{'gradient-border': selectedCar && selectedCar.plate === car.plate, 'car-card': true}" class="bg-[#353535] bg-opacity-[30%] not-gradient-border w-[18rem] h-[10.2rem] bg-opacity-70 rounded-xl p-2 mt-3 text-white">
+                            <img :src="`./assets/${car.label.toLowerCase()}.png`" alt="Car" class="mt-2 mx-auto h-[50%]">
+                            <h2 class="text-sm font-bold mt-2">{{ car.label }}</h2>
+                            <p class="text-[0.6rem] text-[#9F9D9E]">{{ car.plate }}</p>
+                            <p v-if="activeButton === 'car'" class="text-xs mt-2 text-[#9F9D9E]">A(z) {{ car.garage }} garázsban tárolva</p>
+                            <p v-if="activeButton === 'impound'" class="text-xs mt-2 text-[#9F9D9E]">Lefoglalva</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
