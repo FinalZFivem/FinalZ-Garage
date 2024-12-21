@@ -306,6 +306,7 @@ end)
 
 
 RegisterNUICallback("takeOut", function(data, cb)
+  if not data.vehicle then return end
   lib.requestModel(data.vehicle)
   lib.callback("server:getVehProperties", false, function(props)
     local veh = CreateVehicle(data.vehicle, Config.Garages[lib.points.getClosestPoint().id].spawnVehicle.x,
@@ -328,7 +329,10 @@ RegisterNUICallback("takeOut", function(data, cb)
   end, data.plate)
 end)
 
+
+
 RegisterNUICallback("takeOutImp", function(data, cb)
+  if not data.vehicle then return end
   lib.requestModel(data.vehicle)
   lib.callback("server:getVehProperties", false, function(props)
     local veh = CreateVehicle(data.vehicle, Config.Garages[lib.points.getClosestPoint().id].spawnVehicle.x,
