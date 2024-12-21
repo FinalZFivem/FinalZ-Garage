@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
 description 'FinalZ Garage'
-author 'sikosz, Goshawk1337, K_O'
+author 'sikosz, Goshawk1337, Kek_Orbit'
 version '1.0.1'
 
 
@@ -32,6 +32,3 @@ files {
     'ui/script.js'
 }
 
-escrow_ignore {
-    'shared/*.lua',
-}

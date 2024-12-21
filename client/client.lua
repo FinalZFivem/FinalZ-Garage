@@ -33,15 +33,16 @@ function initGarage(type)
       })
 
       function point:onEnter()
-        print('entered range of point', self.id)
-
         -- textui
-        lib.showTextUI(('[E] - %s'):format(Locales[Config.Language].garageLabelTarget))
+        if not Config.Target.enabled then
+          lib.showTextUI(('[E] - %s'):format(Locales[Config.Language].garageLabelTarget))
+        end
       end
 
       function point:onExit()
-        print('left range of point', self.id)
-        lib.hideTextUI()
+        if not Config.Target.enabled then
+          lib.hideTextUI()
+        end
       end
 
       if Config.Target.enabled then
@@ -52,7 +53,7 @@ function initGarage(type)
             icon = Config.Target.garageIcon,
             distance = Config.Target.distanceToAccess,
             onSelect = function()
-              OpenGarage()
+              OpenGarage(lib.points.getClosestPoint().id)
             end,
           },
         })
@@ -117,7 +118,6 @@ function initGarage(type)
       })
     end
 
-    print(json.encode(blips))
   else
     peds = {}
   end
@@ -126,9 +126,7 @@ end
 ---@param veh integer
 StoreVehicle = function(veh)
   local props = lib.getVehicleProperties(veh)
-  print(json.encode(props))
   lib.callback('server:GetOwnerShip', 1000, function(owner)
-    print(owner)
     if owner then
       lib.callback('server:UpdateStored', false, function()
         DeleteEntity(veh)
@@ -238,50 +236,9 @@ RegisterNUICallback("getImpound", function()
   end)
 end)
 
+
+
 CreateThread(function()
-  if Config.AutomaticDeleteOverTime then
-    if Config.debug then
-      lib.print.info("The automatic car deleter system is turned on")
-    end
-    if GetVehiclePedIsIn(cache.ped, false) ~= 0 then
-      if lib.table.contains(EmptyVehicles, GetVehiclePedIsIn(cache.ped, false)) then
-        for k, v in pairs(EmptyVehicles) do
-          EmptyVehicles[k] = nil
-          -- print(k, "ASD")
-        end
-      end
-    end
-
-    for _, v in pairs(EmptyVehicles) do
-      local props = lib.getVehicleProperties(v)
-      DeleteEntity(v)
-
-      lib.callback('server:setImpounded', false, function()
-        EmptyVehicles = {}
-      end, 2, props.plate, props, "auto")
-    end
-  else
-    if Config.debug then
-      lib.print.info("The automatic car deleter system is turned off")
-    end
-  end
-
-
-
-  if Config.LockSystem then
-    if Config.debug then
-      lib.print.info("The built in lock system is turned on")
-    end
-    RegisterCommand("Z_LockVeh", function(source, rawCommand, args)
-      lockVehicle()
-    end, false)
-  else
-    if Config.debug then
-      lib.print.info("The built in lock system is turned off")
-    end
-  end
-
-
   initGarage(true)
 end)
 
@@ -296,7 +253,6 @@ AddEventHandler("onResourceStop", function(resname)
     if lib.table.contains(EmptyVehicles, GetVehiclePedIsIn(cache.ped, false)) then
       for k, v in pairs(EmptyVehicles) do
         EmptyVehicles[k] = nil
-        -- print(k, "ASD")
       end
     end
   end
@@ -367,7 +323,6 @@ RegisterNUICallback("takeOut", function(data, cb)
     end, 0, data.plate, lib.getVehicleProperties(veh))
 
     for i = 1, #props do
-      print(props[i], "PROP")
       lib.setVehicleProperties(veh, props[i], false)
     end
   end, data.plate)
@@ -391,7 +346,6 @@ RegisterNUICallback("takeOutImp", function(data, cb)
     end, 0, data.plate, lib.getVehicleProperties(veh))
 
     for i = 1, #props do
-      print(props[i], "PROP")
       lib.setVehicleProperties(veh, props[i], false)
     end
   end, data.plate)
@@ -417,8 +371,37 @@ function SetNuiState(state, impound)
   end
 end
 
-RegisterCommand("impoundy", function(source, args, rawCommand)
-  ImpoundVehicle(lib.getClosestVehicle(GetEntityCoords(PlayerPedId()), 2.0))
+RegisterNetEvent("delAll")
+AddEventHandler("delAll", function(plates)
+  if GetInvokingResource() ~= nil then return end
+
+  local vehiclePool = GetGamePool('CVehicle')
+  for i = 1, #vehiclePool do
+    if GetPedInVehicleSeat(vehiclePool[i], -1) == 0 then
+      local props = lib.getVehicleProperties(vehiclePool[i])
+      DeleteEntity(vehiclePool[i])
+
+      lib.callback('server:setImpounded', false, function()
+
+      end, 2, props.plate, props, "auto")
+    end
+  end
+end)
+
+
+
+RegisterNetEvent("notify")
+AddEventHandler("notify", function(type, msg)
+  if GetInvokingResource() ~= nil then return end
+  Config.notify(msg, type)
 end)
 
 exports("ImpoundVehicle", ImpoundVehicle)
+
+CreateThread(function()
+  if Config.LockSystem then
+    RegisterCommand("Z_LockVeh", function(source, rawCommand, args)
+      lockVehicle()
+    end, false)
+  end
+end)

@@ -149,6 +149,19 @@
         --animate-duration: 1s;
     }
 
+    ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10rem;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
 </style>
 <body class="font-brand font-bold bg-black bg-opacity-90 overflow-hidden">
     <div id="app" class="h-screen flex items-center justify-center">
@@ -209,7 +222,7 @@
                             <transition name="fade" mode="out-in">
                                 <div class="flex flex-col ml-6" :key="selectedCar?.body">
                                     <span class="text-2xl text-white">{{ selectedCar?.body || '75' }}%</span>
-                                    <p class="text-sm text-gray-400">Jármű állapot</p>
+                                    <p class="text-sm text-gray-400">Vehicle health</p>
                                 </div>
                             </transition>
                         </div>
@@ -222,20 +235,20 @@
                         </div>
                         <transition name="fade" mode="out-in">
                             <div class="flex flex-col ml-4 mt-1" :key="selectedCar?.fuel">
-                                <p class="text-2xl font-bold text-white">ÜZEMANYAG</p>
-                                <p class="text-sm text-gray-400">Az autóban</p>
+                                <p class="text-2xl font-bold text-white">FUEL</p>
+                                <p class="text-sm text-gray-400">in the vehicle</p>
                             </div>
                         </transition>
                     </div>
                 </div>
-                <div class="w-[65rem] h-[44rem] text-center ml-5 -mt-3">
-                    <div class="grid grid-cols-3 flex flex-row -gap-y-[1rem]">
+                <div class="w-[65rem] h-[44rem] text-center ml-5 -mt-3 overflow-y-auto">
+                    <div class="grid grid-cols-3 flex flex-row -gap-y-[1rem] ">
                         <div v-for="car in filteredCars" :key="car.plate" @click="selectCar(car)" :class="{'gradient-border': selectedCar && selectedCar.plate === car.plate, 'car-card': true}" class="bg-[#353535] bg-opacity-[30%] not-gradient-border w-[18rem] h-[10.2rem] bg-opacity-70 rounded-xl p-2 mt-3 text-white">
                             <img :src="`./assets/${car.label.toLowerCase()}.png`" alt="Car" class="mt-2 mx-auto h-[50%]">
                             <h2 class="text-sm font-bold mt-2">{{ car.label }}</h2>
                             <p class="text-[0.6rem] text-[#9F9D9E]">{{ car.plate }}</p>
-                            <p v-if="activeButton === 'car'" class="text-xs mt-2 text-[#9F9D9E]">A(z) {{ car.garage }} garázsban tárolva</p>
-                            <p v-if="activeButton === 'impound'" class="text-xs mt-2 text-[#9F9D9E]">Lefoglalva</p>
+                            <p v-if="activeButton === 'car'" class="text-xs mt-2 text-[#9F9D9E]">Stored in {{ gName }} </p>
+                            <p v-if="activeButton === 'impound'" class="text-xs mt-2 text-[#9F9D9E]">Impounded</p>
                         </div>
                     </div>
                 </div>

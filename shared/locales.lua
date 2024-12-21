@@ -16,7 +16,9 @@ Locales = {
         noVehicles = "Nincs járműved!",
         impounding = "Kocsi lefoglalása",
         cancelledImp = "Abbahagytad a kocsi lefoglalását.",
-        successImp  = "Sikeresen lefoglaltad a kocsit."
+        successImp  = "Sikeresen lefoglaltad a kocsit.",
+        autoDel = "%s percen belül az összes jármű törölve lesz amiben nincsen sofőr!",
+        deletedCars = "Az összes jármű törölve lett amiben nem volt sofőr, keressétek a lefoglaltakban az járműveket"
 
     },
     ["EN"] = {
@@ -35,6 +37,8 @@ Locales = {
         noVehicles = "No vehicles available in garage or impound.",
         impounding = "Impounding vehicle",
         cancelledImp = "You cancelled the impounding of the vehicle.",
-        successImp  = "You successfully impounded the vehicle."
+        successImp  = "You successfully impounded the vehicle.",
+        autoDel = "in %s Minutes all the vehicles that doesn't have a driver, gonna be deleted!",
+        deletedCars = "All the vehicles been deleted that did not have a driver! Search them in the impounded!"
     }
 }

@@ -1,11 +1,15 @@
 Config = {}
-Config.Language = "HU" --"EN", "HU"
+Config.Language = "EN" --"EN", "HU"
 Config.AutomaticDeleteOverTime = true
-Config.TimeForAutoDel = 5 -- in minutes, MINIMUM 5 MINUTES
+Config.DeleteDates = {
+    {["h"] = 11, ["m"] = 59},
+    {["h"] = 12, ["m"] = 10},
+    {["h"] = 13, ["m"] = 36},
+}
 Config.debug = true --for printing informations
 Config.LockSystem = true --Simple vehicle lock system. similar to esx_vehiclelocks 
 Config.Target = {
-    enabled = false,
+    enabled = true,
     garageIcon = "fa-solid fa-car",
     distanceToAccess = 1.5
 }
@@ -81,8 +85,4 @@ Config.types = {
 }
 Config.notify = function(msg,type)
     ESX.ShowNotification(msg, 5000, type)
-end
-
-Config.removemoney = function()
-    exports.ox_inventory:RemoveItem(source, "money", Config.ImpoundTakeoutPrice)
 end
