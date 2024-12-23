@@ -56,13 +56,12 @@ lib.callback.register('server:UpdateStored', function(source, stored, plate, pro
 end)
 
 lib.callback.register('server:setImpounded', function(source, stored, plate, props, type)
-    local identifier = GetPlayerIdentifierByType(source, "license"):gsub("license:", "")
+        local identifier = GetPlayerIdentifierByType(source, "license"):gsub("license:", "")
 
 
     MySQL.update(
-        'UPDATE owned_vehicles SET `stored` = @stored, `vehicle` = @vehicle WHERE `plate` = @plate AND `owner` = @identifier',
+        'UPDATE owned_vehicles SET `stored` = @stored, `vehicle` = @vehicle WHERE `plate` = @plate',
         {
-            ['@identifier'] = identifier,
             ['@vehicle']    = json.encode(props),
             ['@plate']      = plate,
             ['@stored']     = stored,

@@ -1,7 +1,6 @@
 local peds = {}
 local blips = {}
 local EmptyVehicles = {}
-AddTextEntry("BLIP_PROPCAT", "Garázs")
 
 function GetVehicleLabel(model)
   local label = GetLabelText(GetDisplayNameFromVehicleModel(model))
@@ -30,6 +29,7 @@ function initGarage(type)
       local point = lib.points.new({
         coords = v.pedPlace,
         distance = Config.Target.distanceToAccess * 1.5,
+
       })
 
       function point:onEnter()
@@ -80,8 +80,9 @@ function initGarage(type)
         SetBlipAsShortRange(blipValue, Config.Blip.shortRange)
         SetBlipScale(blipValue, Config.Blip.scale)
         BeginTextCommandSetBlipName("STRING")
-        AddTextComponentString(Config.Garages[blipIndex].label)
+        AddTextComponentString(Config.Blip.label)
         EndTextCommandSetBlipName(blipValue)
+
         if Config.debug then
           lib.print.info(blipIndex, "Blip created")
         end
@@ -91,7 +92,7 @@ function initGarage(type)
       local zone = lib.zones.sphere({
         coords = vec3(v.storeVehicle.xyz),
         radius = v.storeZoneSize,
-        debug = v.debugZone,
+        debug = v.drawOutline,
         inside = function()
           if IsControlJustReleased(0, 38) then
             if not cache.vehicle then
@@ -117,7 +118,6 @@ function initGarage(type)
         end
       })
     end
-
   else
     peds = {}
   end
@@ -290,7 +290,7 @@ function ImpoundVehicle(vehicle)
       }) then
     lib.callback('server:setImpounded', false, function()
     end, 2, plate, props, "manual")
-    DeleteEntity(vehicle)
+    ESX.Game.DeleteVehicle(vehicle)
     Config.notify(Locales[Config.Language].successImp)
   else
     Config.notify(Locales[Config.Language].cancelledImp)

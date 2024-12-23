@@ -39,6 +39,8 @@ const App = Vue.createApp({
                     fetch(`https://${GetParentResourceName()}/exit`);
                 }, 500);
             }
+            this.selectedCar = null;
+
         },
         takeOut(vehicle, plate) {
             const alertElement = document.querySelector('.animate__zoomIn');
@@ -56,7 +58,7 @@ const App = Vue.createApp({
                     });
                 }, 500);
             }
-            console.log(vehicle, plate);
+            this.selectedCar = null;
         },
         takeOutImp(vehicle, plate) {
             fetch(`https://${GetParentResourceName()}/takeOutImp`, {
@@ -66,7 +68,8 @@ const App = Vue.createApp({
                     plate: plate
                 })
             });
-            console.log(vehicle, plate);
+            this.selectedCar = null;
+
         },
         hideAlert() {
             const alertElement = document.querySelector('.alert');
