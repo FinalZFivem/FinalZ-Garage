@@ -185,19 +185,23 @@ if Config.AutomaticDeleteOverTime then
     CreateThread(function()
         while true do
             local time = os.date("*t")
-            local h, m = time.hour, time.min
+            local h, m, sum = time.hour, time.min, time.hour * 60 + time.min
 
             for k, v in ipairs(Config.DeleteDates) do
-                if v["h"] == h and v["m"] - m == 10 then
+                local diff = v["h"] * 60 + v["m"] - sum
+                if diff == 10  then
                     TriggerClientEvent("notify", -1, "info", string.format(Locales[Config.Language].autoDel, 10))
                 end
-                if v["h"] == h and v["m"] - m == 5 then
+                if diff == 5  then
                     TriggerClientEvent("notify", -1, "info", string.format(Locales[Config.Language].autoDel, 5))
                 end
-                if v["h"] == h and v["m"] - m == 3 then
+                if diff == 3    then
                     TriggerClientEvent("notify", -1, "info", string.format(Locales[Config.Language].autoDel, 3))
                 end
-                if v["h"] == h and v["m"] == m then
+                if diff == 1   then
+                    TriggerClientEvent("notify", -1, "info", string.format(Locales[Config.Language].autoDel, 1))
+                end
+                if diff == m then
                     TriggerClientEvent("notify", -1, "info", Locales[Config.Language].deletedCars)
 
                     TriggerClientEvent("delAll", -1)
